@@ -13,6 +13,13 @@ export default function Login(): JSX.Element {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const key = localStorage.getItem("api-key");
+    if (key) {
+      navigate("/");
+    }
+  }, []);
+
+  useEffect(() => {
     setValid(checkId(apiKey));
   }, [apiKey]);
 
@@ -20,7 +27,7 @@ export default function Login(): JSX.Element {
     const code = (await checkApiKey(apiKey)) as { status?: number };
     if (code.status === 401) setFailed(true);
     else {
-      localStorage.setItem('api-key', apiKey);
+      localStorage.setItem("api-key", apiKey);
       navigate(`/`);
     }
   };

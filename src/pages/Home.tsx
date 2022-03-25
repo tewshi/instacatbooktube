@@ -1,15 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { Cat, Favorite } from "../utils/types";
-import { addFavorite, deleteFavorite, getCats, getFavorites } from "../utils/utils";
+import {
+  addFavorite,
+  deleteFavorite,
+  getCats,
+  getFavorites,
+} from "../utils/utils";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import useWindowDimensions from "../utils/hooks";
+import { useNavigate } from "react-router-dom";
 
 export default function Home(): JSX.Element {
   const [images, setImages] = useState<Cat[]>([]);
   const [favorites, setFavorites] = useState<Favorite[]>([]);
   const { width } = useWindowDimensions();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,20 +34,25 @@ export default function Home(): JSX.Element {
 
   const addFavor = async (id: string) => {
     if (favorites.find((i) => i.image_id === id)) {
-      await deleteFavorite(favorites.find((i) => i.image_id === id)?.id as number);
+      await deleteFavorite(
+        favorites.find((i) => i.image_id === id)?.id as number
+      );
       setFavorites(await getFavorites());
-      
     } else {
       await addFavorite(id);
       setFavorites(await getFavorites());
-      
     }
+  };
+
+  const logout = () => {
+    localStorage.removeItem("api-key");
+    navigate("/login");
   };
 
   return (
     <div className="h-screen">
       <div className="flex absolute w-full h-14 justify-between items-center px-4 top-0 backdrop-blur-md z-10">
-        <button>
+        <button onClick={() => logout()}>
           <svg
             width="24"
             height="24"
@@ -54,7 +67,7 @@ export default function Home(): JSX.Element {
           </svg>
         </button>
         <h1>instacatbooktube</h1>
-        <button>
+        <button onClick={() => navigate("favorite")}>
           <svg
             width="24"
             height="24"
