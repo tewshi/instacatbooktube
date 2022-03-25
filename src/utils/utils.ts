@@ -17,7 +17,6 @@ export async function request<TResponse>(
   config?: RequestInit
 ): Promise<TResponse> {
   const response = await fetch(`${apiUrl}${url}`, config);
-  console.log("config", config);
   return await response.json();
 }
 

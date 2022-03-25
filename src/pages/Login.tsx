@@ -21,12 +21,15 @@ export default function Login(): JSX.Element {
 
   useEffect(() => {
     setValid(checkId(apiKey));
+    setFailed(false);
   }, [apiKey]);
 
   const login = async () => {
+    setFailed(false);
     const code = (await checkApiKey(apiKey)) as { status?: number };
-    if (code.status === 401) setFailed(true);
-    else {
+    if (code.status === 401) {
+      setFailed(true);
+    } else {
       localStorage.setItem("api-key", apiKey);
       navigate(`/`);
     }
@@ -35,7 +38,12 @@ export default function Login(): JSX.Element {
   return (
     <div className="flex items-center flex-col p-[20px] min-h-screen">
       <Logo />
-      <Input value={apiKey} setValue={setApiKey} valid={valid} />
+      <Input
+        value={apiKey}
+        setValue={setApiKey}
+        valid={valid}
+        failed={failed}
+      />
       <Button disabled={!valid} text="Log In" onClick={login} />
     </div>
   );

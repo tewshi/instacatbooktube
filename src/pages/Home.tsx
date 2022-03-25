@@ -27,7 +27,6 @@ export default function Home(): JSX.Element {
   }, []);
 
   const fetchMoreData = async () => {
-    console.log("images => ", images);
     setImages([...images, ...(await getCats(images.length / 10 + 1))]);
   };
 
