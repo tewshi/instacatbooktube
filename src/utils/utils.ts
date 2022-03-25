@@ -64,3 +64,8 @@ export async function addFavorite(image_id: string) {
 export async function deleteFavorite(image_id: number) {
   return await api.delete(`/favourites/${image_id}`);
 }
+
+export default function getDimensions(dom: HTMLElement | null) {
+  return { width: (dom as HTMLElement).offsetWidth, height: (dom as HTMLElement).offsetHeight };
+}
+

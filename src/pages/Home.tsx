@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Cat, Favorite } from "../utils/types";
-import {
+import getDimensions, {
   addFavorite,
   deleteFavorite,
   getCats,
@@ -9,13 +9,12 @@ import {
 import InfiniteScroll from "react-infinite-scroll-component";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
-import useWindowDimensions from "../utils/hooks";
 import { useNavigate } from "react-router-dom";
 
 export default function Home(): JSX.Element {
   const [images, setImages] = useState<Cat[]>([]);
   const [favorites, setFavorites] = useState<Favorite[]>([]);
-  const { width } = useWindowDimensions();
+  const containerRef = useRef(null);
 
   const navigate = useNavigate();
 
@@ -37,7 +36,7 @@ export default function Home(): JSX.Element {
       await deleteFavorite(
         favorites.find((i) => i.image_id === id)?.id as number
       );
-      setFavorites(await getFavorites());
+      
     } else {
       await addFavorite(id);
       setFavorites(await getFavorites());
@@ -50,7 +49,7 @@ export default function Home(): JSX.Element {
   };
 
   return (
-    <div className="h-screen">
+    <div className="h-screen relative">
       <div className="flex absolute w-full h-14 justify-between items-center px-4 top-0 backdrop-blur-md z-10">
         <button onClick={() => logout()}>
           <svg
@@ -89,7 +88,7 @@ export default function Home(): JSX.Element {
           </svg>
         </button>
       </div>
-      <div className="p-2 h-full pt-14 overflow-auto" id="scrollableDiv">
+      <div className="p-2 h-full pt-14 overflow-auto" id="scrollableDiv" ref={containerRef}>
         <InfiniteScroll
           dataLength={images.length}
           next={fetchMoreData}
@@ -113,7 +112,7 @@ export default function Home(): JSX.Element {
                 alt={`cat - ${index}`}
                 className="w-full"
                 width={"100%"}
-                height={((width - 16) / i.width) * i.height}
+                height={((getDimensions(containerRef.current).width - 16) / i.width) * i.height}
               />
               <button
                 className="absolute bottom-6 right-6"
